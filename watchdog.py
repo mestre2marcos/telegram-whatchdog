@@ -85,7 +85,24 @@ async def check_services(context: ContextTypes.DEFAULT_TYPE):
                         await context.bot.send_message(chat_id=int(chat_id), text=msg)
                 SERVICE_STATUS[api["alias"]] = "OFFLINE"
 
-    #TODO add check for front 
+    print("Testing Front")
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(CONFIG["front"]["host"]) as response:
+                if response.status == 200:
+                    SERVICE_STATUS["Frontend"] = "ONLINE"
+                else:
+                    for chat_id in CONFIG["allowed_ids"]:
+                        if CONFIG["allowed_ids"][chat_id]["active"] == True:
+                            msg = 'Hey! Frontend seems to be OFFLINE!'
+                            await context.bot.send_message(chat_id=int(chat_id), text=msg)
+                    SERVICE_STATUS["Frontend"] = "OFFLINE"
+        except:
+            for chat_id in CONFIG["allowed_ids"]:
+                if CONFIG["allowed_ids"][chat_id]["active"] == True:
+                    msg = 'Hey! Frontend seems to be OFFLINE!'
+                    await context.bot.send_message(chat_id=int(chat_id), text=msg)
+            SERVICE_STATUS["Frontend"] = "OFFLINE"
 
 ######################################################################################################################################
 
@@ -94,7 +111,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/start - Show available commands",
         "/help - Show available commands",
         "/addme - Resquest to add your Telegram account",
-        "/removeme - Remove your subscription"
+        "/removeme - Remove your subscription",
         "/listapproval",
         "/approve <id> - Approve a user",
         "/turnadmin <id> - Grant admin privileges to a user",

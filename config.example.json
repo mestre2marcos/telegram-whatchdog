@@ -1,0 +1,37 @@
+{
+    "broker" : [
+        {
+            "name" : "alias 1",
+            "host" : "mqtt1.example.com",
+            "port" : 8883,
+            "ssl"  : true,
+            "username" : "",
+            "password" : ""
+        },
+        {
+            "name" : "alias 2",
+            "host" : "mqtt2.example.com",
+            "port" : 8883,
+            "ssl"  : true,
+            "username" : "",
+            "password" : ""
+        }
+    ],
+    "api" : [
+        {
+            "alias": "api.example.com",
+            "host" : "api.example.com",
+            "port" : 8080,
+            "response" : "Hello World!"
+        }
+    ],
+    "front" : {
+        "host" : "example.com",
+        "port" : 8080
+    },
+    "allowed_ids" : {
+        "name": "admin",
+        "active": true,
+        "admin": true
+    }
+}

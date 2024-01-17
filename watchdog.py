@@ -15,14 +15,16 @@ SERVICE_STATUS = {}
 
 chat_id_list = []
 CONFIG = {}
+
+config_file_path = os.path.join(os.path.dirname(__file__), 'config.json')
 def load_config():
     global CONFIG
-    with open('config.json', 'r') as config_file:
+    with open(config_file_path, 'r') as config_file:
         CONFIG = json.load(config_file)
 
 def save_config():
     global CONFIG
-    with open('config.json', 'w') as config_file:
+    with open(config_file_path, 'w') as config_file:
         str_json = json.dumps(CONFIG, indent=4)
         config_file.write(str_json)
 

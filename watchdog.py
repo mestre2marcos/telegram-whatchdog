@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 import json
 from datetime import datetime
+import socket
 
 import paho.mqtt.client as mqtt
 
@@ -38,6 +39,19 @@ def on_connect_mqtt(mqttc:mqtt.Client, obj, flags, rc):
     mqttc.disconnect()
 
 ######################################################################################################################################
+def internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Host: 8.8.8.8 (google-public-dns-a.google.com)
+    OpenPort: 53/tcp
+    Service: domain (DNS/TCP)
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error as ex:
+        print(ex)
+        return False
 
 async def callback_10(context: ContextTypes.DEFAULT_TYPE):
     for chat_id in CONFIG["allowed_ids"]:
@@ -48,6 +62,12 @@ async def send_push_notification(context: ContextTypes.DEFAULT_TYPE, text, chat_
     await context.bot.send_message(chat_id=chat_id, text=text)
 
 async def check_services(context: ContextTypes.DEFAULT_TYPE):
+    ## check internet
+    for host in CONFIG["trusted_hosts"]:
+        if not internet(host): 
+            print("Internet is down")
+            return # if any host is down, return
+
     SERVICE_STATUS["datetime"] = datetime.now().isoformat()
     for broker in CONFIG["broker"]:
         mqttc = mqtt.Client()

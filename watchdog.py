@@ -88,23 +88,24 @@ async def check_services(context: ContextTypes.DEFAULT_TYPE):
                 SERVICE_STATUS[api["alias"]] = "OFFLINE"
 
     print("Testing Front")
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(CONFIG["front"]["host"]) as response:
-                if response.status == 200:
-                    SERVICE_STATUS["Frontend"] = "ONLINE"
-                else:
-                    for chat_id in CONFIG["allowed_ids"]:
-                        if CONFIG["allowed_ids"][chat_id]["active"] == True:
-                            msg = 'Hey! Frontend seems to be OFFLINE!'
-                            await context.bot.send_message(chat_id=int(chat_id), text=msg)
-                    SERVICE_STATUS["Frontend"] = "OFFLINE"
-        except:
-            for chat_id in CONFIG["allowed_ids"]:
-                if CONFIG["allowed_ids"][chat_id]["active"] == True:
-                    msg = 'Hey! Frontend seems to be OFFLINE!'
-                    await context.bot.send_message(chat_id=int(chat_id), text=msg)
-            SERVICE_STATUS["Frontend"] = "OFFLINE"
+    for front in CONFIG["front"]:
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.get(front["host"]) as response:
+                    if response.status == 200:
+                        SERVICE_STATUS[front["alias"]] = "ONLINE"
+                    else:
+                        for chat_id in CONFIG["allowed_ids"]:
+                            if CONFIG["allowed_ids"][chat_id]["active"] == True:
+                                msg = 'Hey! ' + front["alias"] + ' seems to be OFFLINE!'
+                                await context.bot.send_message(chat_id=int(chat_id), text=msg)
+                        SERVICE_STATUS[front["alias"]] = "OFFLINE"
+            except:
+                for chat_id in CONFIG["allowed_ids"]:
+                    if CONFIG["allowed_ids"][chat_id]["active"] == True:
+                        msg = 'Hey! ' + front["alias"] + ' seems to be OFFLINE!'
+                        await context.bot.send_message(chat_id=int(chat_id), text=msg)
+                SERVICE_STATUS[front["alias"]] = "OFFLINE"
 
 ######################################################################################################################################
 

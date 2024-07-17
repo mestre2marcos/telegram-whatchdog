@@ -25,10 +25,18 @@
             "response" : "Hello World!"
         }
     ],
-    "front" : {
-        "host" : "example.com",
-        "port" : 8080
-    },
+    "front" : [
+        {
+            "alias" : "Production Frontend",
+            "host" : "example.com",
+            "port" : 8080
+        },
+        {
+            "alias" : "Test Frontend",
+            "host" : "test.example.com",
+            "port" : 8080
+        }
+    ],
     "allowed_ids" : {
         "name": "admin",
         "active": true,
